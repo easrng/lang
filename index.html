@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>lang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="module" src="./ui.js"></script>
+    <style>
+      :root {
+        color-scheme: dark light;
+        font-family: system-ui, sans-serif;
+        --red: light-dark(#e30, #e55);
+        --green: light-dark(#490, #6b0);
+        --blue: #0ac;
+        --yellow: #c80;
+        --pink: #c6d;
+      }
+      ::highlight(lisp-numbers),
+      ::highlight(lisp-strings) {
+        color: var(--green);
+      }
+      ::highlight(lisp-parens-purple) {
+        color: var(--blue);
+      }
+      ::highlight(lisp-parens-yellow) {
+        color: var(--yellow);
+      }
+      ::highlight(lisp-parens-pink) {
+        color: var(--pink);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: row;
+      }
+      .pane {
+        resize: horizontal;
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .pane:first-child {
+        border-right: 1px solid GrayText;
+        width: 50%;
+        flex-shrink: 0;
+      }
+      .pane:last-child {
+        flex-grow: 1;
+        flex-basis: 0;
+      }
+      .textarea {
+        flex-grow: 1;
+        border: none;
+        resize: none;
+        border-top: 1px solid graytext;
+        background-color: color-mix(in srgb, graytext 10%, transparent);
+        outline: none;
+        padding: 6px;
+        font-family: monospace, monospace;
+        overflow: auto;
+        word-wrap: break-word;
+        white-space: pre;
+      }
+      .textarea:focus {
+        box-shadow: 0 0 0 1px inset SelectedItem;
+      }
+      .header {
+        padding: 3px 6px;
+        display: flex;
+        height: 32px;
+        gap: 3px;
+      }
+      button {
+        width: 26px;
+      }
+      .placeholder {
+        color: graytext;
+      }
+      .error {
+        color: var(--red);
+      }
+      #step {
+        width: 50px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pane">
+      <div class="header">
+        <select id="examples" autocomplete="off">
+          <option value="_" disabled selected>Examples</option>
+        </select>
+      </div>
+      <div
+        contenteditable="plaintext-only"
+        class="textarea"
+        id="input"
+        spellcheck="false"
+      ></div>
+    </div>
+    <div class="pane">
+      <div class="header">
+        <button disabled id="first">⏮︎</button>
+        <button disabled id="prev">◀︎</button>
+        <input type="text" id="step" readonly value="" autocomplete="off" />
+        <button disabled id="next">▶︎</button>
+        <button disabled id="last">⏭︎</button>
+      </div>
+      <div
+        class="textarea"
+        id="output"
+        contenteditable="plaintext-only"
+        spellcheck="false"
+      ></div>
+    </div>
+  </body>
+</html>
