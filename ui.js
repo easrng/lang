@@ -218,69 +218,80 @@ function highlight(element) {
  * @param {number} index
  */
 function showStep(index) {
-  if (index === 0) {
-    currentStep = 0;
-    state = initialState;
-    backPatches.length = 0;
-  } else {
-    let i = currentStep;
-    while (backPatches.length && i > index) {
-      i--;
-      state = applyPatch({ _: state }, backPatches.pop(), true, false)
-        .newDocument._;
-    }
-    let prevYield = Date.now();
-    while (i < index && state && canStep(state)) {
-      const prevState = state;
-      state = step(state);
-      const patch = compare({ _: state }, { _: prevState });
-      console.log(
+  try {
+    if (index === 0) {
+      currentStep = 0;
+      state = initialState;
+      backPatches.length = 0;
+    } else {
+      let i = currentStep;
+      while (backPatches.length && i > index) {
+        i--;
+        state = applyPatch({ _: state }, backPatches.pop(), true, false)
+          .newDocument._;
+      }
+      const prevYield = Date.now();
+      while (i < index && state && canStep(state)) {
+        const prevState = state;
+        state = step(state);
+        const patch = compare({ _: state }, { _: prevState });
+        /* console.log(
         JSON.stringify(prevState) ===
           JSON.stringify(
             applyPatch({ _: state }, patch, true, false).newDocument._
           )
-      );
-      if (backPatches.length > 10000) {
-        backPatches.shift();
-      }
-      backPatches.push(patch);
-      i++;
-      if (index === Infinity && Date.now() - prevYield > 7) {
-        if (steppingToEnd) {
-          setTimeout(() => showStep(index), 7);
+      ); */
+        if (backPatches.length > 10000) {
+          backPatches.shift();
         }
-        break;
+        backPatches.push(patch);
+        i++;
+        if (index === Infinity && Date.now() - prevYield > 7) {
+          if (steppingToEnd) {
+            setTimeout(() => showStep(index), 7);
+          }
+          break;
+        }
       }
+      if (steppingToEnd && state && !canStep(state)) {
+        steppingToEnd = false;
+      }
+      currentStep = i;
     }
-    if (steppingToEnd && state && !canStep(state)) {
-      steppingToEnd = false;
-    }
-    currentStep = i;
+    outputDiv.textContent = state ? prettyPrint(state) : "'()";
+    highlight(outputDiv);
+  } catch (e) {
+    outputDiv.innerHTML = `<span class="error">${
+      new Option(e + "").innerHTML
+    }</span>`;
+    console.error(e);
+    steppingToEnd = false;
+    currentStep++;
+    backPatches.push([{ op: "replace", path: "/_", value: state }]);
+    state = null;
   }
   stepInput.value = "" + currentStep;
-  outputDiv.textContent = state ? prettyPrint(state) : "'()";
-  highlight(outputDiv);
   updateButtons();
 }
 
-async function onChange() {
+function onChange() {
   highlight(inputDiv);
   state = null;
+  steppingToEnd = false;
   backPatches.length = 0;
   currentStep = 0;
   stepInput.value = "";
-  outputDiv.innerHTML =
-    '<span class="placeholder">Step forwards to start</span>';
+  outputDiv.textContent = "";
   updateButtons();
   if (inputDiv.textContent.trim()) {
     try {
-      let parsed = parse(inputDiv.textContent);
-      initialState = state = parsed;
-      backPatches.length = 0;
+      initialState = state = parse(inputDiv.textContent);
       showStep(0);
       updateButtons();
     } catch (e) {
-      outputDiv.innerHTML = `<span class="error">${e}</span>`;
+      outputDiv.innerHTML = `<span class="error">${
+        new Option(e + "").innerHTML
+      }</span>`;
       console.error(e);
     }
   }

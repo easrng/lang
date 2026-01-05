@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 /*!
  * https://github.com/Starcounter-Jack/JSON-Patch
  * (c) 2013-2021 Joachim Wester

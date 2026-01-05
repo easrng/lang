@@ -65,7 +65,10 @@
         border: none;
         resize: none;
         border-top: 1px solid graytext;
-        background-color: color-mix(in srgb, graytext 10%, transparent);
+        background-color: light-dark(
+          color-mix(in srgb, graytext 5%, transparent),
+          color-mix(in srgb, graytext 10%, transparent)
+        );
         outline: none;
         padding: 6px;
         font-family: monospace, monospace;
@@ -81,6 +84,7 @@
         display: flex;
         height: 32px;
         gap: 3px;
+        flex-shrink: 0;
       }
       button {
         width: 26px;

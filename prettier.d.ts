@@ -1,4 +1,5 @@
 // https://github.com/prettier/prettier/blob/next/src/document/public.js
+// deno-lint-ignore-file
 export namespace builders {
   type DocCommand =
     | Align

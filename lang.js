@@ -45,7 +45,7 @@ export function readToken(source) {
 
   // Number
   const numMatch = source.match(
-    /^-?(?:[0-9]|[1-9][0-9]+)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?/
+    /^-?(?:[0-9]|[1-9][0-9]+)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?\b/
   );
   if (numMatch) {
     return {
@@ -120,7 +120,7 @@ function parseInner(source) {
 
   if (token.type === "lparen") {
     /** @type {Data[]} */
-    let value = [];
+    const value = [];
     let remaining = rest;
 
     while (true) {
